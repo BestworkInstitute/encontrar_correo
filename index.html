@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestwork - Verificar Contacto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .panel {
+            width: 300px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-radius: 8px;
+        }
+        .panel h2 {
+            color: #333;
+        }
+        .panel input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .panel button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .panel button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="panel">
+    <h2>Bienvenido a Bestwork</h2>
+    <p>Ingresa tu correo para verificar contacto</p>
+    <input type="email" id="email" placeholder="Correo electrónico">
+    <button onclick="searchContact()">Verificar</button>
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    async function searchContact() {
+        const email = document.getElementById("email").value;
+        const apiUrl = 'https://sedsa.api-us1.com/api/3/contacts';
+        const apiKey = 'd2830a151e2d5ae79ee56b3bf8035c9728d27a1c75fbd2fe89eff5f11c57f078c0f93ae1';
+        
+        const resultDiv = document.getElementById("result");
+        resultDiv.textContent = "Verificando...";
+        resultDiv.style.color = "black";
+
+        try {
+            const response = await fetch(apiUrl + '?email=' + encodeURIComponent(email), {
+                method: 'GET',
+                headers: {
+                    'Api-Token': apiKey,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.contacts && data.contacts.length > 0) {
+                    resultDiv.textContent = "Contacto encontrado: " + email;
+                    resultDiv.style.color = "green";
+                } else {
+                    resultDiv.textContent = "El contacto no existe.";
+                    resultDiv.style.color = "red";
+                }
+            } else {
+                resultDiv.textContent = "Error en la solicitud: " + response.status + " - " + response.statusText;
+                resultDiv.style.color = "red";
+            }
+        } catch (error) {
+            resultDiv.textContent = "Error de conexión: No se pudo conectar a la API. Verifique su conexión a Internet.";
+            resultDiv.style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
