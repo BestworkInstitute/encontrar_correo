@@ -7,28 +7,29 @@
 </head>
 <body>
     <h1>Búsqueda de Contacto</h1>
-    <input type="email" id="email" placeholder="Ingresa el correo">
+    <input type="email" id="email" placeholder="Ingresa el correo" required>
     <button onclick="buscarContacto()">Buscar</button>
     <div id="resultado"></div>
-
     <script>
         async function buscarContacto() {
             const email = document.getElementById('email').value;
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.textContent = "Buscando...";
             try {
                 const response = await fetch(`/api/buscarContacto?email=${encodeURIComponent(email)}`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.contacts && data.contacts.length > 0) {
-                        document.getElementById('resultado').textContent = `Contacto encontrado: ${email}`;
+                        resultadoDiv.textContent = `Contacto encontrado: ${email}`;
                     } else {
-                        document.getElementById('resultado').textContent = 'El contacto no existe.';
+                        resultadoDiv.textContent = 'El contacto no existe.';
                     }
                 } else {
-                    document.getElementById('resultado').textContent = `Error: ${response.status}`;
+                    resultadoDiv.textContent = `Error en la solicitud: ${response.status}`;
                 }
             } catch (error) {
                 console.error(error);
-                document.getElementById('resultado').textContent = 'Error en la búsqueda.';
+                resultadoDiv.textContent = 'Error de red o en la búsqueda.';
             }
         }
     </script>
