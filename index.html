@@ -3,49 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificación de Contacto</title>
+    <title>Búsqueda de Contacto</title>
 </head>
 <body>
-    <h1>Verificación de Contacto</h1>
-    <p>Ingrese su correo electrónico para verificar si existe en la base de datos:</p>
-    <input type="email" id="emailInput" placeholder="Correo electrónico" value="Fabianignacio.tm@gmail.com">
-    <button onclick="searchContact()">Buscar</button>
-    <p id="resultMessage"></p>
+    <h1>Búsqueda de Contacto</h1>
+    <input type="email" id="email" placeholder="Ingresa el correo">
+    <button onclick="buscarContacto()">Buscar</button>
+    <div id="resultado"></div>
+
     <script>
-        const API_KEY = 'd2830a151e2d5ae79ee56b3bf8035c9728d27a1c75fbd2fe89eff5f11c57f078c0f93ae1';
-        const API_URL = 'https://sedsa.api-us1.com';
-
-        async function searchContact() {
-            const email = document.getElementById("emailInput").value;
-            const resultMessage = document.getElementById("resultMessage");
-
-            if (!email) {
-                resultMessage.innerText = "Por favor, ingresa un correo electrónico.";
-                return;
-            }
-
+        async function buscarContacto() {
+            const email = document.getElementById('email').value;
             try {
-                const response = await fetch(`${API_URL}/api/3/contacts?email=${encodeURIComponent(email)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Api-Token': API_KEY
-                    }
-                });
-
+                const response = await fetch(`/api/buscarContacto?email=${encodeURIComponent(email)}`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.contacts && data.contacts.length > 0) {
-                        resultMessage.innerText = `Contacto encontrado: ${email}`;
+                        document.getElementById('resultado').textContent = `Contacto encontrado: ${email}`;
                     } else {
-                        resultMessage.innerText = "El contacto no existe.";
+                        document.getElementById('resultado').textContent = 'El contacto no existe.';
                     }
                 } else {
-                    resultMessage.innerText = `Error en la solicitud para ${email}: ${response.status}`;
-                    console.error("Error en la solicitud:", response.status, response.statusText);
+                    document.getElementById('resultado').textContent = `Error: ${response.status}`;
                 }
             } catch (error) {
-                resultMessage.innerText = "Ocurrió un error al realizar la solicitud.";
-                console.error("Error de red:", error);
+                console.error(error);
+                document.getElementById('resultado').textContent = 'Error en la búsqueda.';
             }
         }
     </script>
